@@ -1,0 +1,40 @@
+{
+  "name": "airlock",
+  "version": "0.1.0",
+  "description": "Routes supported project edits into a Git worktree for review, accept or reject. Worktree routing is not a filesystem sandbox.",
+  "author": {
+    "name": "billymrx"
+  },
+  "userConfig": {
+    "mode": {
+      "type": "string",
+      "default": "strict",
+      "options": [
+        "strict",
+        "balanced",
+        "permissive"
+      ],
+      "title": "Command policy mode",
+      "description": "strict denies classified external effects and git-topology commands; balanced asks once for matched external effects (denies headless); permissive allows and records classified actions. Unmatched commands pass in every mode; this heuristic is not a sandbox."
+    },
+    "includeUntracked": {
+      "type": "boolean",
+      "default": true,
+      "title": "Include untracked files",
+      "description": "Copy non-ignored regular untracked files into the baseline (default on); ignored files are excluded, while symlinks, directories, and files over 4 MiB are skipped."
+    },
+    "retainRejectedTransactions": {
+      "type": "boolean",
+      "default": false,
+      "title": "Retain rejected transactions",
+      "description": "Keep rejected or aborted transaction worktrees for inspection instead of destroying them"
+    },
+    "maxStoredTransactions": {
+      "type": "number",
+      "default": 50,
+      "title": "History size",
+      "description": "How many finished transaction records to keep per repository"
+    }
+  },
+  "license": "MIT"
+}

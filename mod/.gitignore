@@ -1,0 +1,3 @@
+# Claude Code materializes these API declarations beside a loaded plugin.
+/.claude-plugin/types/
+/dist/

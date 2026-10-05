@@ -1,0 +1,6 @@
+{
+  "description": "Airlock: turn-scoped Git worktree routing with review, accept/reject commands, and heuristic side-effect checks.",
+  "modules": [
+    "./register.ts"
+  ]
+}
