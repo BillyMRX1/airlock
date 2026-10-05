@@ -64,7 +64,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        help="archive path (default: mod/dist/airlock-<manifest-version>.zip)",
+        help="archive path (default: dist/airlock-<manifest-version>.zip beneath the plugin directory)",
     )
     args = parser.parse_args()
 

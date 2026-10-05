@@ -11,11 +11,11 @@ Airlock is a Claude Code plugin that routes supported project file operations th
 
 ## Load from a source checkout
 
-Clone or otherwise obtain this repository, then start Claude Code in the Git repository you want to work on. Pass the absolute path to the plugin's `mod` directory and add Airlock's workspace directory to Claude Code's allowed directories:
+Clone or otherwise obtain this repository, then start Claude Code in the Git repository you want to work on. Pass the absolute path to the Airlock repository directory and add Airlock's workspace directory to Claude Code's allowed directories:
 
 ```sh
 mkdir -p "$HOME/.claude-airlock"
-claude --plugin-dir /absolute/path/to/transactional-claude/mod \
+claude --plugin-dir /absolute/path/to/airlock \
   --add-dir ~/.claude-airlock
 ```
 
@@ -25,10 +25,10 @@ The current project must already be a Git repository with a `HEAD`. The first co
 
 ## Local review archive
 
-From a source checkout, `python3 mod/scripts/package.py` creates a local ZIP
-under `mod/dist/`. It is a review artifact, not a published release. Extract
+From the plugin directory, `python3 scripts/package.py` creates a local ZIP
+under `dist/`. The private 0.1.0 preview release also includes this archive. Extract
 it and pass the resulting `airlock` directory directly to `--plugin-dir`
-(in place of the checkout's `mod` path), together with `--add-dir` as above.
+(in place of the checkout path), together with `--add-dir` as above.
 Tests and integration hosts stay in the source checkout; generated type files
 and the private handoff documents are excluded from the archive.
 
@@ -115,17 +115,20 @@ If accept fails after applying has begun, Airlock attempts to restore backups an
 
 ## Development checks
 
-Run these in the full source checkout:
+Run these from the plugin directory (the published repository root, or `mod/`
+in the original development workspace):
 
 ```sh
-claude plugin validate --strict mod
-claude plugin test mod
-NODE_PATH="$PWD/mod/integration" bun run mod/integration/real-git.ts
-NODE_PATH="$PWD/mod/integration" bun run mod/integration/crash-recovery.ts
+claude plugin validate --strict .
+claude plugin test .
+NODE_PATH="$PWD/integration" bun run integration/real-git.ts
+NODE_PATH="$PWD/integration" bun run integration/crash-recovery.ts
 ```
 
 The integration hosts additionally need Bun and the existing demo seed at
-`spike-sandbox/demo-project`; they cannot run from the runtime-only archive.
+`../spike-sandbox/demo-project` relative to the plugin directory. This development
+seed is excluded from the published repository and archive; the hosts cannot run
+without it.
 Bun and Python are development/packaging tools, not plugin runtime dependencies.
 
 ## Development evidence

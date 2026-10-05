@@ -1,14 +1,17 @@
 # Real-Git integration host
 
-Run from the repository root with Bun installed:
+Run from the plugin directory (the published repository root, or `mod/` in
+the original workspace) with Bun installed:
 
 ```sh
-NODE_PATH="$PWD/mod/integration" bun run mod/integration/real-git.ts
+NODE_PATH="$PWD/integration" bun run integration/real-git.ts
 ```
 
 This no-model host imports Airlock's production lifecycle, recovery, and
 accept/reject/abort handlers. Its `$` adapter runs real Git and filesystem
-operations; the fixture is a disposable clone of `spike-sandbox/demo-project`.
+operations; the fixture is a disposable clone of `../spike-sandbox/demo-project`
+relative to the plugin directory. This development seed is not distributed in
+the repository or release ZIP and must already exist to run these hosts.
 The production handler may create its ephemeral baseline commit only in that
 clone's linked worktree. The host covers dirty staged/unstaged/untracked and
 ignored state, binary and Unicode filenames, apply, conflict, reject, abort,
@@ -21,7 +24,7 @@ passes `git apply --check` (the saved fingerprint is deliberately omitted).
 Run the separate crash recovery probe with:
 
 ```sh
-NODE_PATH="$PWD/mod/integration" bun run mod/integration/crash-recovery.ts
+NODE_PATH="$PWD/integration" bun run integration/crash-recovery.ts
 ```
 
 That probe starts a child host, creates and stores an ACTIVE transaction,
@@ -36,7 +39,7 @@ during actual partial writes.
 
 The host does not emulate Claude's engine. Permission rewriting, UI rendering,
 hook dispatch, and live model behavior remain outside this integration suite;
-`claude plugin test mod` and any separately approved engine E2E cover those
+`claude plugin test .` and any separately approved engine E2E cover those
 boundaries. The pane renderer is never invoked, so the tiny
 `react/jsx-dev-runtime` stub under `integration/react/` only permits importing
 the TSX command module.
