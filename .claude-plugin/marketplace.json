@@ -1,0 +1,12 @@
+{
+  "name": "airlock-marketplace",
+  "description": "Install Airlock for reviewing Claude Code project edits in Git worktree transactions.",
+  "owner": { "name": "billymrx" },
+  "plugins": [
+    {
+      "name": "airlock",
+      "source": "./",
+      "description": "Review supported Claude Code edits in Git worktree transactions before accepting or rejecting them."
+    }
+  ]
+}

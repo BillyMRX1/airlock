@@ -9,7 +9,33 @@ Airlock is a Claude Code plugin that routes supported project file operations th
 - A project opened from an existing Git repository with a valid `HEAD` commit. Airlock does not initialize repositories or create commits in the real project.
 - Host tools used by Airlock, including `bash`, `cp`, `mkdir`, and `rm`.
 
-## Load from a source checkout
+## Install without cloning
+
+Run once in your terminal:
+
+```sh
+claude plugin marketplace add BillyMRX1/airlock
+claude plugin install airlock@airlock-marketplace
+mkdir -p "$HOME/.claude-airlock"
+```
+
+The repository is private for now, so your GitHub account must have access and
+Git must be authenticated for GitHub. Claude manages the download and plugin
+cache; you do not need a manual clone or pull.
+
+Then start Claude Code in the Git project you want to work on:
+
+```sh
+claude --add-dir "$HOME/.claude-airlock"
+```
+
+The installed plugin loads automatically. Restart an existing Claude session
+after installing, and use `/airlock-status` to check that the command is available.
+The additional directory remains required for routed file-tool permissions.
+To update later, run `claude plugin marketplace update airlock-marketplace`
+followed by `claude plugin update airlock@airlock-marketplace`.
+
+## Load a source checkout instead
 
 Clone or otherwise obtain this repository, then start Claude Code in the Git repository you want to work on. Pass the absolute path to the Airlock repository directory and add Airlock's workspace directory to Claude Code's allowed directories:
 
