@@ -1,6 +1,10 @@
-# Airlock
+# Airlock — a Claude Code mod
 
-Airlock is a Claude Code plugin that routes supported project file operations through a Git worktree for each coding turn. At the end of a turn, review the proposed diff and choose whether to apply it to the repository or discard it. The transaction is a review and recovery mechanism for project file changes; it is not a filesystem or command sandbox.
+Airlock is a **Claude Code mod** built with function hooks. It routes supported
+project edits into a Git worktree so you can review each coding turn, then
+**Accept** its patch or **Reject** it. It uses Claude Code's plugin system for
+installation and distribution. This is worktree routing, not a filesystem or
+command sandbox.
 
 ## Requirements
 
@@ -9,9 +13,9 @@ Airlock is a Claude Code plugin that routes supported project file operations th
 - A project opened from an existing Git repository with a valid `HEAD` commit. Airlock does not initialize repositories or create commits in the real project.
 - Host tools used by Airlock, including `bash`, `cp`, `mkdir`, and `rm`.
 
-## Install without cloning
+## One-time setup
 
-Run once in your terminal:
+Install the mod and create its temporary-worktree directory once:
 
 ```sh
 claude plugin marketplace add BillyMRX1/airlock
@@ -23,29 +27,65 @@ The repository is private for now, so your GitHub account must have access and
 Git must be authenticated for GitHub. Claude manages the download and plugin
 cache; you do not need a manual clone or pull.
 
-Then start Claude Code in the Git project you want to work on:
+Next, save access to that directory once so you don't need a launch flag every
+time. In `~/.claude/settings.json`, add `~/.claude-airlock` to
+`permissions.additionalDirectories`:
 
-```sh
-claude --add-dir "$HOME/.claude-airlock"
+```json
+{
+  "permissions": {
+    "additionalDirectories": ["~/.claude-airlock"]
+  }
+}
 ```
 
-The installed plugin loads automatically. Restart an existing Claude session
+If the file already has settings, merge this entry into it; keep the existing
+settings and directory entries. If the file doesn't exist, create it with the
+example above. This lets Claude's file tools access Airlock's worktree copies.
+See Claude's [working-directory permissions](https://code.claude.com/docs/en/permissions#working-directories).
+
+That's the setup. You don't need to repeat the install, `mkdir`, or permission
+configuration for each session.
+
+## Everyday use
+
+Open a terminal in your Git project and start Claude as usual:
+
+```sh
+claude
+```
+
+The installed mod loads automatically. Restart an existing Claude session
 after installing, and use `/airlock-status` to check that the command is available.
-The additional directory remains required for routed file-tool permissions.
-To update later, run `claude plugin marketplace update airlock-marketplace`
-followed by `claude plugin update airlock@airlock-marketplace`.
+Ask for a code change, inspect the review, and choose Accept or Reject. If the
+pane is hidden, run `/airlock-review`.
+
+If you prefer not to save the directory permission, use
+`claude --add-dir "$HOME/.claude-airlock"` for each launch instead.
+
+### Updating
+
+```sh
+claude plugin marketplace update airlock-marketplace
+claude plugin update airlock@airlock-marketplace
+```
+
+Restart Claude after updating.
 
 ## Load a source checkout instead
 
-Clone or otherwise obtain this repository, then start Claude Code in the Git repository you want to work on. Pass the absolute path to the Airlock repository directory and add Airlock's workspace directory to Claude Code's allowed directories:
+For development or manual installation, start Claude Code in your Git project
+and pass the absolute path to the Airlock repository directory. With the
+one-time directory permission saved above:
 
 ```sh
-mkdir -p "$HOME/.claude-airlock"
-claude --plugin-dir /absolute/path/to/airlock \
-  --add-dir ~/.claude-airlock
+claude --plugin-dir /absolute/path/to/airlock
 ```
 
-Use the real absolute path for your checkout. The `--add-dir` setting is required because Claude Code checks permissions against rewritten worktree paths under `~/.claude-airlock`. Without it, file tools may prompt or be denied. This command applies the directory permission to this Claude Code launch; configure `permissions.additionalDirectories` in your Claude Code settings if you want it to persist across launches.
+Use the real absolute path for your checkout. If you skipped the saved directory
+permission, add `--add-dir "$HOME/.claude-airlock"` to this launch. Without either
+form of access, routed file tools may prompt or be denied. Avoid loading a source
+copy alongside an already installed Airlock copy.
 
 The current project must already be a Git repository with a `HEAD`. The first coding turn creates a transaction automatically. Workspaces live beneath `~/.claude-airlock/`; transaction records are kept in Claude Code’s plugin-private persistent store.
 
@@ -54,7 +94,7 @@ The current project must already be a Git repository with a `HEAD`. The first co
 From the plugin directory, `python3 scripts/package.py` creates a local ZIP
 under `dist/`. The private 0.1.0 preview release also includes this archive. Extract
 it and pass the resulting `airlock` directory directly to `--plugin-dir`
-(in place of the checkout path), together with `--add-dir` as above.
+(in place of the checkout path), with the same directory permission as above.
 Tests and integration hosts stay in the source checkout; generated type files
 and the private handoff documents are excluded from the archive.
 
